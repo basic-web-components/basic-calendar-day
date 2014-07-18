@@ -1,0 +1,229 @@
+<link rel="import" href="../basic-calendar-day.html">
+
+<script src="moonphase.js"></script>
+
+<polymer-element name="calendar-day-moon-phase" extends="basic-calendar-day">
+
+<template>
+  <style>
+  :host {
+    padding: 4px;
+  }
+  :host #date {
+    text-align: right;
+  }
+  </style>
+  <div id="date"></div>
+  <div id="simple"></div>
+  <div id="moonAge"></div>
+  <div id="quarter"></div>
+</template>
+
+<script>
+var jdn, moonElong, proper_ang;
+
+proper_ang = function(big) {
+  var tmp;
+  tmp = 0;
+  if (big > 0) {
+    tmp = big / 360.0;
+    tmp = (tmp - (~~tmp)) * 360.0;
+  } else {
+    tmp = Math.ceil(Math.abs(big / 360.0));
+    tmp = big + tmp * 360.0;
+  }
+  return tmp;
+};
+
+jdn = function(date) {
+  var a, b, day, dd, jd, mm, mmm, month, year, yy, yyy, zone;
+  month = date.getMonth();
+  day = date.getDate();
+  year = date.getFullYear();
+  // zone = date.getTimezoneOffset() / 1440;
+  zone = 0;
+  mm = month;
+  dd = day;
+  yy = year;
+  yyy = yy;
+  mmm = mm;
+  if (mm < 3) {
+    yyy = yyy - 1;
+    mmm = mm + 12;
+  }
+  day = dd + zone + 0.5;
+  a = ~~(yyy / 100);
+  b = 2 - a + ~~(a / 4);
+  jd = ~~(365.25 * yyy) + ~~(30.6001 * (mmm + 1)) + day + 1720994.5;
+  if (jd > 2299160.4999999) {
+    return jd + b;
+  }
+};
+
+moonElong = function(jd) {
+  var dr, elong, meeD, meeDT, meeM, meeM1, meeT, meeT2, meeT3, moonNum, rd;
+  dr = Math.PI / 180;
+  rd = 1 / dr;
+  meeDT = Math.pow(jd - 2382148, 2) / (41048480 * 86400);
+  meeT = (jd + meeDT - 2451545.0) / 36525;
+  meeT2 = Math.pow(meeT, 2);
+  meeT3 = Math.pow(meeT, 3);
+  meeD = 297.85 + (445267.1115 * meeT) - (0.0016300 * meeT2) + (meeT3 / 545868);
+  meeD = (proper_ang(meeD)) * dr;
+  meeM1 = 134.96 + (477198.8676 * meeT) + (0.0089970 * meeT2) + (meeT3 / 69699);
+  meeM1 = (proper_ang(meeM1)) * dr;
+  meeM = 357.53 + (35999.0503 * meeT);
+  meeM = (proper_ang(meeM)) * dr;
+  elong = meeD * rd + 6.29 * Math.sin(meeM1);
+  elong = elong - 2.10 * Math.sin(meeM);
+  elong = elong + 1.27 * Math.sin(2 * meeD - meeM1);
+  elong = elong + 0.66 * Math.sin(2 * meeD);
+  elong = proper_ang(elong);
+  elong = Math.round(elong);
+  moonNum = ((elong + 6.43) / 360) * 28;
+  moonNum = ~~moonNum;
+  if (moonNum === 28) {
+    return 0;
+  } else {
+    return moonNum;
+  }
+};
+
+Polymer( "calendar-day-moon-phase", {
+  
+  dateChanged: function() {
+    this.super();
+
+    var date1 = this.date;
+    var age1 = this._moonAge( date1 );
+
+    var date2 = new Date( date1.getTime() );
+    date2.setDate( date2.getDate() + 1 ); // Increment date.
+    var age2 = this._moonAge( date2 );
+
+    this.$.moonAge.textContent = age1;
+
+    var phase = 29.530588853;
+    var quarterNew = 0;
+    var quarterFirst = phase / 4;
+    var quarterFull = phase / 2;
+    var quarterLast = phase * 3/4;
+
+    if ( age1 <= quarterNew && quarterNew < age2 || 
+        age1 >= quarterLast && age2 < quarterFirst ) {
+      quarter = "New";
+    } else if ( age1 <= quarterFirst && quarterFirst < age2 ) {
+      quarter = "First";
+    } else if ( age1 <= quarterFull && quarterFull < age2 ) {
+      quarter = "Full";
+    } else if ( age1 <= quarterLast && quarterLast < age2 ) {
+      quarter = "Last";
+    } else {
+      quarter = "";
+    }
+
+    this.$.quarter.textContent = quarter;
+
+    var jd = jdn( date1 );
+    this.$.simple.textContent = moonElong( jd );
+  },
+
+  _simple: function( date ) {
+
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      var d = date.getDate();
+
+      /*
+        calculates the moon phase (0-7), accurate to 1 segment.
+        0 = > new moon.
+        4 => full moon.
+        */
+
+      var c,e;
+      var jd;
+      var b;
+
+      if (m < 3) {
+          y--;
+          m += 12;
+      }
+      ++m;
+      c = 365.25*y;
+      e = 30.6*m;
+      jd = c+e+d-694039.09;  /* jd is total days elapsed */
+      jd /= 29.53;           /* divide by the moon cycle (29.53 days) */
+      b = jd;      /* int(jd) -> b, take integer part of jd */
+      jd -= b;       /* subtract integer part to leave fractional part of original jd */
+      // b = jd*8 + 0.5;    /* scale fraction from 0-8 and round by adding 0.5 */
+      b = Math.round( jd * 8 );
+      // b = b & 7;       /* 0 and 8 are the same so turn 8 into 0 */
+      if ( b === 8 ) {
+        b = 0;
+      }
+      return b;
+  },
+
+  // Return the age of the moon (the number of days into a lunar cycle).
+  _moonAge: function( date ) {
+
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+
+    var YY = 0;
+    var MM = 0;
+    var K1 = 0; 
+    var K2 = 0; 
+    var K3 = 0;
+    var JD = 0;
+    var IP = 0;
+    var DP = 0;
+    var NP = 0;
+    var RP = 0;
+    
+    // calculate the Julian date (noon UTC)
+    YY = year - Math.floor( ( 12 - month ) / 10 );
+    MM = month + 9;
+    if( MM >= 12 ) MM = MM - 12;
+    
+    K1 = Math.floor( 365.25 * ( YY + 4712 ) );
+    K2 = Math.floor( 30.6 * MM + 0.5 );
+    K3 = Math.floor( Math.floor( ( YY / 100 ) + 49 ) * 0.75 ) - 38;
+    
+    JD = K1 + K2 + day + 59;                  // for dates in Julian calendar
+    if( JD > 2299160 ) JD = JD - K3;        // for Gregorian calendar
+        
+    // calculate moon's age in days
+    // IP = this._normalize( ( JD - 2451550.1 ) / 29.530588853 );
+    // AG = IP*29.53;
+
+    IP = (JD + 4.867) / 29.530588853;
+    IP = IP - Math.floor(IP);
+    // if(IP < 0.5)
+    // {
+    //     AG = IP * 29.530588853 + 29.530588853 / 2;
+    // }
+    // else
+    // {
+    //     AG = IP * 29.530588853 - 29.530588853 / 2;
+    // }
+    // AG = Math.floor(AG) + 1;
+    AG = IP * 29.530588853;
+
+    return AG;
+  },
+
+  // normalize values to range 0...1    
+  _normalize: function( v ) {
+    v = v - Math.floor( v );
+    if ( v < 0 ) {
+      v = v + 1;
+    }
+    return v;
+  }
+
+});
+</script>
+
+</polymer-element>
