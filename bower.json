@@ -8,7 +8,8 @@
     "basic-element": "basic-web-components/basic-element#master"
   },
   "devDependencies": {
-    "basic-framed-content": "basic-web-components/basic-framed-content#master"
+    "basic-framed-content": "basic-web-components/basic-framed-content#master",
+    "basic-calendar-month": "basic-web-components/basic-calendar-month#master"
   },
   "keywords": [
     "basic-web-components",
