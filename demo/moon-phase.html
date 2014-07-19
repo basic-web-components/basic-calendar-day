@@ -10,8 +10,6 @@ Shows an icon for the moon phase for a given date.
   <style>
     :host {
       display: block;
-    }
-    #phaseIcon {
       height: 2em;
       width: 2em;
     }
@@ -45,7 +43,7 @@ Polymer( "moon-phase", {
     }
 
     var showIcon = ( quarter.length > 0 );
-    this.$.phaseIcon.style.visibility = showIcon ? "visible" : "hidden";
+    this.$.phaseIcon.style.display = showIcon ? "block" : "none";
     if ( showIcon ) {
       this.$.phaseIcon.src = this.resolvePath( "icons/" + quarter );
     } else {
