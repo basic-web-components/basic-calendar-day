@@ -26,7 +26,7 @@ styling common sorts of calendars.
   </style>
 
   <content>
-    <div id="date"></div>
+    <div id="day"></div>
   </content>
 
 </template>
@@ -76,7 +76,7 @@ Polymer( "basic-calendar-day", {
   // TODO: publish() date and accept both Date objects and date strings.
   dateChanged: function() {
     var date = this.date;
-    this.$.date.textContent = date.getDate();
+    this.$.day.textContent = date.getDate();
     var today = BasicCalendarDay.today();
     var dayOfWeek = date.getDay();
     var dayOfMonth = date.getDate();

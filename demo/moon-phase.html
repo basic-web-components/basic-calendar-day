@@ -1,5 +1,10 @@
 <!--
 Shows an icon for the moon phase for a given date.
+
+The phases are calculated for UTC (Universal Coordinated Time). Local moon
+phases will vary.
+
+Moon phase icons modified from icons from flaticon.com by Freepik under CC-BY.
 -->
 
 <link rel="import" href="../../polymer/polymer.html">
@@ -10,8 +15,11 @@ Shows an icon for the moon phase for a given date.
   <style>
     :host {
       display: block;
-      height: 2em;
-      width: 2em;
+      position: relative;
+    }
+    #phaseIcon {
+      height: 100%;
+      width: 100%;
     }
   </style>
   <img id="phaseIcon">
@@ -22,26 +30,29 @@ Polymer( "moon-phase", {
   
   dateChanged: function() {
 
+    // To determine quarter, we compare the moon's angle at midnight on the
+    // given date with the angle at midnight on the following date.
     var date = this.date;
     var angle = this.moonAngle( date );
-
     var dateNext = new Date( date.getTime() );
     dateNext.setDate( dateNext.getDate() + 1 ); // Increment date.
     var angleNext = this.moonAngle( dateNext );
 
+    // See if the moon's angle crosses a threshold during the given date.
     var quarter;
     if ( angle >= 0 && angleNext > angle ) {
-      quarter = "full"; // \u25ef"; // Full moon
+      quarter = "full"; // Full moon
     } else if ( angle >= 90 && angleNext < 90 ) {
-      quarter = "firstQuarter"; // \u25d0"; // First quarter
+      quarter = "firstQuarter"; // First quarter
     } else if ( angle >= 180 && angleNext < 180 ) {
-      quarter = "new"; // \u2b24"; // "\u25cf"; // "\u26ab"; // \u25CB"; // New moon
+      quarter = "new"; // New moon
     } else if ( angle >= 270 && angleNext < 270 ) {
-      quarter = "lastQuarter"; // "\u25d1"; // Last quarter
+      quarter = "lastQuarter"; // Last quarter
     } else {
-      quarter = "";
+      quarter = ""; // Nothing special
     }
 
+    // Show or hide an icon as appropriate.
     var showIcon = ( quarter.length > 0 );
     this.$.phaseIcon.style.display = showIcon ? "block" : "none";
     if ( showIcon ) {
