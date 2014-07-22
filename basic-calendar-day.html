@@ -3,6 +3,12 @@ A single day in a calendar.
 
 A variety of CSS class will be applied to the host element that can assist with
 styling common sorts of calendars.
+
+To the degree possible, all language/culture-specific aspects of this component
+are localizable with the Globalize library (https://github.com/jquery/globalize).
+
+@element basic-calendar-day
+@demo http://basic-web-components.github.io/components/basic-calendar-day/
 -->
 
 <link rel="import" href="../basic-element/basic-element.html">
@@ -15,11 +21,11 @@ styling common sorts of calendars.
   :host([generic]) {
     padding: 4px;
   }
-  :host([generic]) #date {
+  :host([generic])::shadow #day {
     text-align: right;
   }
 
-  :host(.today) {
+  :host([generic].today) {
     color: darkred;
     font-weight: bold;
   }
@@ -71,9 +77,16 @@ BasicCalendarDay = {
 
 Polymer( "basic-calendar-day", {
   
-  applyAuthorStyles: true,
+  /**
+   * The date shown in this element.
+   *
+   * @property date
+   * @type Date
+   * @default today
+   */
+  date: null,
 
-  // TODO: publish() date and accept both Date objects and date strings.
+  // TODO: accept both Date objects and date strings.
   dateChanged: function() {
     var date = this.date;
     this.$.day.textContent = date.getDate();
