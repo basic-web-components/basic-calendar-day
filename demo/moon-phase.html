@@ -56,7 +56,7 @@ Polymer( "moon-phase", {
     var showIcon = ( quarter.length > 0 );
     this.$.phaseIcon.style.display = showIcon ? "block" : "none";
     if ( showIcon ) {
-      this.$.phaseIcon.src = this.resolvePath( "icons/" + quarter );
+      this.$.phaseIcon.src = this.resolvePath( "icons/" + quarter + ".svg" );
     } else {
       this.$.phaseIcon.src = "";
     }
