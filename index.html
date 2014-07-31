@@ -27,6 +27,11 @@ basic-framed-content {
 p {
   max-width: 800px;
 }
+
+basic-calendar-month::shadow basic-days-of-week::shadow .dayOfWeek.weekend,
+basic-calendar-month /deep/ calendar-day-moon-phase.weekend.insideMonth {
+  color: gray;
+}
 </style>
 
 </head>
