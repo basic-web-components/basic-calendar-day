@@ -47,8 +47,8 @@ BasicCalendarDay = {
 
   MILLISECONDS_IN_DAY: 24 * 60 * 60 * 1000,
 
-  midnightOnDate: function( date ) {
-    var d = new Date( date.getTime() );
+  midnightOnDate: function(date) {
+    var d = new Date(date.getTime());
     d.setHours(0);
     d.setMinutes(0);
     d.setSeconds(0);
@@ -59,21 +59,21 @@ BasicCalendarDay = {
   // Return the result of adding/subtracting a number of days to a date.
   // TODO: There are surely gnarly date math bugs here. Ideally some time-geek
   // library should be used for this calculation.
-  offsetDateByDays: function( date, days ) {
+  offsetDateByDays: function(date, days) {
     // Use noon hour for date math, since adding/subtracting multiples of 24 hours
     // starting from noon is guaranteed to end up on the correct date (although
     // the hours might have changed).
-    var noon = new Date( date.getTime() );
-    noon.setHours( 11 );
-    var result = new Date( noon.getTime() + ( days * this.MILLISECONDS_IN_DAY ));
+    var noon = new Date(date.getTime());
+    noon.setHours(11);
+    var result = new Date(noon.getTime() + (days * this.MILLISECONDS_IN_DAY));
     // Restore original hours
-    result.setHours( date.getHours() );
+    result.setHours(date.getHours());
     return result;
   },
 
   // Returns midnight today.
   today: function() {
-    return BasicCalendarDay.midnightOnDate( new Date() );
+    return BasicCalendarDay.midnightOnDate(new Date());
   }
 
 };
@@ -96,28 +96,28 @@ Polymer({
     var today = BasicCalendarDay.today();
     var dayOfWeek = date.getDay();
     var dayOfMonth = date.getDate();
-    var nextDate = BasicCalendarDay.offsetDateByDays( date, 1 );
-    var daysFromToday = Math.round( date.getTime() - today.getTime() ) / BasicCalendarDay.MILLISECONDS_IN_DAY;
-    var weekend = ( dayOfWeek === 0 || dayOfWeek === 6 );
+    var nextDate = BasicCalendarDay.offsetDateByDays(date, 1);
+    var daysFromToday = Math.round(date.getTime() - today.getTime()) / BasicCalendarDay.MILLISECONDS_IN_DAY;
+    var weekend = (dayOfWeek === 0 || dayOfWeek === 6);
     var classList = this.classList;
-    classList.toggle( "past", date < today );
-    classList.toggle( "today", daysFromToday == 0 );
-    classList.toggle( "future", date > today );
-    classList.toggle( "firstDayOfMonth", dayOfMonth === 1 );
-    classList.toggle( "lastDayOfMonth", date.getMonth() !== nextDate.getMonth() );
-    classList.toggle( "firstWeek", dayOfMonth <= 7 );
-    classList.toggle( "sunday", dayOfWeek === 0 );
-    classList.toggle( "saturday", dayOfWeek === 6 );
-    classList.toggle( "weekend", weekend );
-    classList.toggle( "weekday", !weekend );
-    classList.toggle( "alternateMonth", Math.abs( date.getMonth() - today.getMonth() ) % 2 === 1 );
+    classList.toggle('past', date < today);
+    classList.toggle('today', daysFromToday == 0);
+    classList.toggle('future', date > today);
+    classList.toggle('firstDayOfMonth', dayOfMonth === 1);
+    classList.toggle('lastDayOfMonth', date.getMonth() !== nextDate.getMonth());
+    classList.toggle('firstWeek', dayOfMonth <= 7);
+    classList.toggle('sunday', dayOfWeek === 0);
+    classList.toggle('saturday', dayOfWeek === 6);
+    classList.toggle('weekend', weekend);
+    classList.toggle('weekday', !weekend);
+    classList.toggle('alternateMonth', Math.abs(date.getMonth() - today.getMonth()) % 2 === 1);
   },
 
   ready: function() {
     this.super();
-    if ( !this.date ) {
+    if (!this.date) {
       // By default, show today.
-      if ( typeof BasicCalendarDay.today !== "undefined" ) {
+      if (typeof BasicCalendarDay.today !== 'undefined') {
         this.date = BasicCalendarDay.today();
       }
     }
