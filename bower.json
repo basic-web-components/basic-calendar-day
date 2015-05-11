@@ -1,15 +1,15 @@
 {
   "name": "basic-calendar-day",
   "description": "A single day in a calendar",
-  "version": "0.0.1",
+  "version": "0.5.0",
   "license": "MIT",
   "main": "basic-calendar-day.html",
   "dependencies": {
-    "basic-element": "basic-web-components/basic-element#master"
+    "basic-element": "basic-web-components/basic-element#^0.5.0"
   },
   "devDependencies": {
-    "basic-framed-content": "basic-web-components/basic-framed-content#master",
-    "basic-calendar-month": "basic-web-components/basic-calendar-month#master"
+    "basic-framed-content": "basic-web-components/basic-framed-content#^0.5.0",
+    "basic-calendar-month": "basic-web-components/basic-calendar-month#^0.5.0"
   },
   "keywords": [
     "basic-web-components",
