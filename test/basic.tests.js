@@ -12,9 +12,11 @@ suite('basic', function() {
     var fixture = document.createElement('basic-calendar-day');
     container.appendChild(fixture);
     var now = new Date();
-    assert(fixture.date instanceof Date);
-    assert(now >= fixture.date);
-    done();
+    flush(function() {
+      assert(fixture.date instanceof Date);
+      assert(now >= fixture.date);
+      done();
+    });
   });
 
   test('set date', function(done) {
@@ -133,7 +135,7 @@ suite('basic', function() {
     container.appendChild(fixture);
     fixture.date = new Date('14 March 2015');
     flush(function() {
-      var today = BasicCalendarDay.today();
+      var today = fixture.today();
       var altMonth = Math.abs(fixture.date.getMonth() - today.getMonth()) % 2 === 1;
       assert.equal(fixture.classList.contains('alternateMonth'), altMonth);
       done();
